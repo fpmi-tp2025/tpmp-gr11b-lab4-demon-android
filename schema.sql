@@ -1,48 +1,31 @@
--- Таблица маклеров
-CREATE TABLE Broker
+CREATE TABLE Brokers
 (
-    broker_id SERIAL PRIMARY KEY,
-    last_name VARCHAR(50) NOT NULL,
-    address TEXT,
-    birth_year INT CHECK (birth_year > 1900)
+    surname CHAR(50) PRIMARY KEY,
+    adress CHAR(100) NOT NULL,
+    year_of_birth INT NOT NULL
 );
 
--- Таблица товаров
-CREATE TABLE Product
+CREATE TABLE Goods
 (
-    product_id SERIAL PRIMARY KEY,
-    product_name VARCHAR(100) NOT NULL,
-    product_type VARCHAR(50) NOT NULL,
-    unit_price NUMERIC(10,2) NOT NULL CHECK (unit_price > 0),
-    supplier VARCHAR(100) NOT NULL,
+    name CHAR(50),
+    type CHAR(50),
+    price INT NOT NULL,
+    vendor CHAR(50),
     expiration_date DATE NOT NULL,
-    supplied_units INT NOT NULL CHECK (supplied_units >= 0)
+    num INT NOT NULL,
+    PRIMARY KEY (name, vendor),
+    UNIQUE(name, vendor)
 );
 
--- Таблица заключенных сделок
-CREATE TABLE Deal (
-    deal_id SERIAL PRIMARY KEY,
-    deal_date DATE NOT NULL,
-    product_id INT NOT NULL,
-    sold_units INT NOT NULL CHECK (sold_units > 0),
-    broker_id INT NOT NULL,
-    buyer_firm VARCHAR(100) NOT NULL,
-    FOREIGN KEY (product_id) REFERENCES Product(product_id)
-        ON UPDATE CASCADE ON DELETE RESTRICT,
-    FOREIGN KEY
-(broker_id) REFERENCES Broker
-(broker_id)
-        ON
-UPDATE CASCADE ON
-DELETE RESTRICT
-);
-
--- Таблица статистики маклеров
-CREATE TABLE BrokerStatistics
+CREATE TABLE Deals
 (
-    broker_id INT PRIMARY KEY,
-    total_sold_units INT NOT NULL DEFAULT 0,
-    total_deal_amount NUMERIC(12,2) NOT NULL DEFAULT 0,
-    FOREIGN KEY (broker_id) REFERENCES Broker(broker_id)
-        ON UPDATE CASCADE ON DELETE CASCADE
+    deal_date DATE NOT NULL,
+    good_name CHAR(50),
+    type_of_good CHAR(50),
+    sell_num INT NOT NULL,
+    broker_surname CHAR(50),
+    vendor CHAR(50),
+    PRIMARY KEY (deal_date, good_name, broker_surname, vendor),
+    FOREIGN KEY (broker_surname) REFERENCES Brokers(surname),
+    FOREIGN KEY (good_name, vendor) REFERENCES Goods(name, vendor)
 );
