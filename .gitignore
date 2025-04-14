@@ -1,0 +1,65 @@
+# CMake build artifacts
+/build/
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+compile_commands.json
+CTestTestfile.cmake
+Testing/
+
+# Compiled files and directories
+/bin/
+/lib/
+*.o
+*.a
+*.so
+*.dylib
+*.dll
+*.exe
+*.out
+
+# Editor/IDE specific files
+.vscode/
+.idea/
+*.swp
+*~
+*.sublime-*
+*.project
+*.creator
+*.cproject
+*.build
+*.tlog
+
+# OS specific files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Test artifacts
+/test_*.db
+/tests/test_schema.sql
+*.gcno
+*.gcda
+*.gcov
+/coverage/
+lcov.info
+
+# Database file (optional - uncomment if you don't want to commit the DB)
+# /docs/ParfumeMarket.db
+
+# Dependency directories (if not using system package manager)
+# /vendor/
+# /external/
+
+# Log files
+*.log
+
+# Credentials / Sensitive info (if any)
+*.env
+*.secret
+
+# Packaging artifacts
+*.tar.gz
+*.zip
+*.deb
+*.rpm
