@@ -50,8 +50,8 @@ jobs:
         # Собираем данные покрытия (.gcda файлы были созданы во время тестов)
         lcov --capture --directory . --output-file coverage.info
         # Удаляем системные заголовки и библиотеки из отчета
-        lcov --remove coverage.info '/usr/*' --output-file coverage.info
-        lcov --remove coverage.info '*/tests/*' --output-file coverage.info # Опционально: удалить тесты
+        lcov --remove coverage.info '/usr/*' --output-file coverage.info --ignore-errors unused
+        lcov --remove coverage.info '*/tests/*' --output-file coverage.info --ignore-errors unused
         # Выводим краткую сводку покрытия в лог
         lcov --list coverage.info
         # Генерируем HTML отчет
