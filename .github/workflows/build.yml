@@ -1,0 +1,66 @@
+name: Build, Test, and Coverage
+
+on:
+  push:
+    branches: 
+    - "*" 
+  pull_request:
+    branches:  
+    - "*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest # Используем последнюю версию Ubuntu
+
+    steps:
+    # 1. Получаем код из репозитория
+    - name: Checkout code
+      uses: actions/checkout@v4 # Используем последнюю версию action
+
+    # 2. Устанавливаем зависимости
+    - name: Install Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential cmake libsqlite3-dev lcov
+
+    # 3. Конфигурируем CMake (включаем тесты и покрытие)
+    #    -B build - создает директорию 'build' для сборки
+    #    -S . - указывает, что исходники в текущей директории
+    #    -DCMAKE_BUILD_TYPE=Debug - собираем в Debug для покрытия
+    #    -DENABLE_COVERAGE=ON - включаем опцию покрытия из CMakeLists.txt
+    - name: Configure CMake
+      run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Debug -DENABLE_COVERAGE=ON
+
+    # 4. Собираем проект
+    #    --build build - указывает директорию сборки
+    #    --config Debug - указывает конфигурацию (важно для некоторых генераторов)
+    - name: Build Project
+      run: cmake --build build --config Debug
+
+    # 5. Запускаем тесты через CTest
+    #    --output-on-failure - показывает вывод тестов только если они упали
+    - name: Run Tests
+      working-directory: ./build # Переходим в директорию сборки перед запуском ctest
+      run: ctest --output-on-failure
+
+    # 6. Генерируем отчет о покрытии кода (если тесты прошли)
+    - name: Generate Code Coverage Report
+      working-directory: ./build # Работаем в директории сборки
+      run: |
+        # Собираем данные покрытия (.gcda файлы были созданы во время тестов)
+        lcov --capture --directory . --output-file coverage.info
+        # Удаляем системные заголовки и библиотеки из отчета
+        lcov --remove coverage.info '/usr/*' --output-file coverage.info
+        lcov --remove coverage.info '*/tests/*' --output-file coverage.info # Опционально: удалить тесты
+        # Выводим краткую сводку покрытия в лог
+        lcov --list coverage.info
+        # Генерируем HTML отчет
+        genhtml coverage.info --output-directory coverage_report
+
+    # 7. Загружаем HTML отчет о покрытии как артефакт сборки
+    - name: Upload Coverage Report Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-report-ubuntu # Имя артефакта
+        path: build/coverage_report/ # Путь к директории с HTML отчетом
+        retention-days: 7 # Сколько дней хранить артефакт (опционально)
