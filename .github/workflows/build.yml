@@ -21,7 +21,7 @@ jobs:
     - name: Install Dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y build-essential cmake libsqlite3-dev lcov
+        sudo apt-get install -y build-essential cmake libsqlite3-dev lcov libcmocka-dev
 
     # 3. Конфигурируем CMake (включаем тесты и покрытие)
     #    -B build - создает директорию 'build' для сборки
